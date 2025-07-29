@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.userManage.mapper.UserMapper">
+	
+	<select id="findByUserCode" parameterType="String" resultType="com.example.userManage.DTO.UserDTO">
+		SELECT user_id, user_code, user_name, password, user_role, is_youkou FROM user_auth WHERE user_code = #{userCode}
+	</select>
+	
+	<insert id="insertAccess" parameterType="com.example.userManage.DTO.AccessDTO">
+		INSERT INTO user_access_log (user_id, gamen_id, start_time)
+		VALUES (#{userId}, #{gamenId}, #{startTime})
+	</insert>
+	
+</mapper>

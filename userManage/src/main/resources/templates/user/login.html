@@ -1,0 +1,146 @@
+<!-- templates/user/login.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>ログイン</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .section-title {
+            background-color: #cfe2ff;
+            padding: 5px 10px;
+            font-weight: bold;
+            border-left: 4px solid #0d6efd;
+            margin-bottom: 10px;
+        }
+        .dot {
+            display: inline-block;
+            margin-right: 5px;
+            color: #000;
+        }
+    </style>
+</head>
+<body class="bg-white">
+
+<div class="container border mt-5 p-4 shadow-sm" style="max-width: 900px;">
+    <div class="row mb-3 align-items-center">
+        <div class="col-md-4">
+            <div class="fw-bold">株式会社ブライトスター</div>
+            <div class="text-muted small">BRIGHT STAR CO.,LTD.</div>
+        </div>
+        <div class="col-md-4 text-center fs-5 fw-bold">
+            社内統合管理システム
+        </div>
+        <div class="col-md-4 text-end">
+            <!-- 로고 대신 공간 확보 -->
+            <div style="height: 40px;"></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- 로그인 영역 -->
+        <div class="col-md-4">
+            <div class="section-title">利用者登録</div>
+            <form th:action="@{/login}" method="post" onsubmit="return validateLoginForm();">
+                <div class="mb-3">
+                    <label for="loginId" class="form-label">ログインID</label>
+					<input type="text" id="userCode" name="userCode" th:value="${userCode}" class="form-control"/>
+				</div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">パスワード</label>
+                    <input type="password" id="password" name="password" class="form-control" />
+                </div>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary">ログイン</button>
+                </div>
+            </form>
+			<div th:if="${loginError}" style="color: red; margin-top: 8px; font-weight: bold;">
+			    <span th:text="${loginError}"></span>
+			</div>
+        </div>
+		<!-- 기능 영역 -->
+		<div class="col-md-8">
+		    <div class="section-title">応用機能</div>
+		    <div class="row">
+		        <div class="col-sm-6">
+		            <p><span class="dot">●</span>受注管理</p>
+		            <p><span class="dot">●</span>見積作成</p>
+		        </div>
+		        <div class="col-sm-6">
+		            <p><span class="dot">●</span>外注管理</p>
+		            <p><span class="dot">●</span>作業催促</p>
+		            <p><span class="dot">●</span>請求作成</p>
+		            <p><span class="dot">●</span>各書類作成</p>
+		        </div>
+		    </div>
+
+		    <div class="section-title">マスタ管理機能</div>
+		    <div class="row">
+		        <div class="col-sm-6">
+		            <p><span class="dot">●</span>取引先情報管理</p>
+		        </div>
+		        <div class="col-sm-6">
+		            <p><span class="dot">●</span>社員情報管理</p>
+		            <ul class="mb-2 ps-4">
+		                <li>基本情報</li>
+		                <li>履歴</li>
+		                <li>経歴</li>
+		            </ul>
+		        </div>
+		    </div>
+
+		    <div class="section-title">開発関連</div>
+		    <p class="mb-1">バージョン Ver0.0.0.1</p>
+		    <p>保留</p>
+		</div>
+    </div>
+</div>
+
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+<script>
+	
+	function validateLoginForm() {
+	    const userCode = document.getElementById("userCode").value.trim();
+	    const passwordInput = document.getElementById("password");
+		const password = passwordInput.value.trim();
+
+
+	    // --- ユーザコード 검사 ---
+	    if (!userCode) {
+	        alert("ユーザコードを入力してください。");
+	        return false;
+	    }
+	    const userCodePattern = /^[a-zA-Z0-9_-]{8,20}$/;
+	    if (!userCodePattern.test(userCode)) {
+	        if (!/^[a-zA-Z0-9_-]+$/.test(userCode)) {
+	            alert("ユーザコードは英数字、数字で入力してください。");
+	        } else {
+	            alert("ユーザコードは8～20文字以下で入力してください。");
+	        }
+	        return false;
+	    }
+
+	    // --- パスワード 검사 ---
+	    if (!password) {
+	        alert("パスワードを入力してください。");
+	        return false;
+	    }
+	    const passwordPattern = /^[a-zA-Z0-9]{8,15}$/;
+	    if (!passwordPattern.test(password)) {
+	        if (!/^[a-zA-Z0-9]+$/.test(password)) {
+	            alert("パスワードは英数字、数字で入力してください。");
+	        } else {
+	            alert("パスワードは8～15文字以下で入力してください。");
+	        }
+	        return false;
+	    }
+
+	    // --- 패스워드 MD5 암호화 ---
+	    const hashedPassword = CryptoJS.MD5(password).toString();
+	    passwordInput.value = hashedPassword;
+	    return true; // 제출 허용
+	}
+
+</script>
+</html>

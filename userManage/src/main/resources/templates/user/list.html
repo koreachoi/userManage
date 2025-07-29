@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<body>
+	<div th:replace="common/header :: header"></div>
+	
+	<div class="container-fluid py-4">
+	       <!-- 헤더 -->
+	       <div class="header-section">
+	           <h3 class="mb-0">
+	               <i class="fas fa-users me-2"></i>
+	               社員管理
+	           </h3>
+	       </div>
+
+	       <!-- 검색 조건 섹션 -->
+	       <div class="search-section">
+	           <h5 class="mb-3">
+	               <i class="fas fa-search me-2"></i>
+	               検索条件
+	           </h5>
+	           
+	           <form th:action="@{/employees}" method="get" onsubmit="return validateStatus()">
+	               <div class="row g-3">
+	                   <div class="col-md-3">
+	                       <label for="company" class="form-label">所属会社</label>
+	                       <select class="form-select" id="company" name="company" th:value="${param.company}">
+	                           <option value="0">全て</option>
+							   <option th:each="item : ${kaisya}"
+							           th:value="${item.category2}"
+							           th:text="${item.value1}">
+							   </option>
+	                       </select>
+	                   </div>
+
+	                   <div class="col-md-3">
+	                       <label for="employeeName" class="form-label">社員名</label>
+	                       <input type="text" class="form-control" id="employeeName" name="employeeName" 
+	                              th:value="${param.employeeName}">
+	                   </div>
+
+	                   <div class="col-md-3">
+	                       <label for="jobType" class="form-label">就業種類</label>
+	                       <select class="form-select" id="jobType" name="jobType" th:value="${param.jobType}">
+							   <option th:each="item : ${syokugyo}"
+							           th:value="${item.category3}"
+							           th:text="${item.value1}"
+									   th:selected="${item.value1 == 'ITエンジニア'}">
+							   </option>
+	                       </select>
+	                   </div>
+
+	                   <div class="col-md-3">
+	                       <label class="form-label">在職</label>
+	                       <div class="d-flex gap-3 mt-2">
+	                           <div class="form-check">
+	                               <input class="form-check-input" type="checkbox" id="active" name="status" value="active" checked/>
+	                               <label class="form-check-label" for="active">在職</label>
+	                           </div>
+	                           <div class="form-check">
+	                               <input class="form-check-input" type="checkbox" id="inactive" name="status" value="inactive"/>
+	                               <label class="form-check-label" for="inactive">非在職</label>
+	                           </div>
+	                       </div>
+	                   </div>
+	               </div>
+
+	               <div class="row mt-3">
+	                   <div class="col-12">
+	                       <button type="submit" class="btn btn-primary">
+	                           <i class="fas fa-search me-2"></i>
+	                           検索
+	                       </button>
+	                   </div>
+	               </div>
+	           </form>
+	       </div>
+
+	       <!-- 검색 결과 섹션 -->
+	       <div class="result-section">
+	           <div class="d-flex justify-content-between align-items-center mb-3">
+	               <h5>
+	                   <i class="fas fa-list me-2"></i>
+	                   社員一覧
+	               </h5>
+	               <div class="d-flex align-items-center gap-3">
+	                   <span class="employee-count">
+	                       件数: <span th:text="${employees?.size() ?: }"></span>件
+	                   </span>
+					   <a href="/register" class="btn btn-success">
+					       <i class="fas fa-plus me-2"></i>
+					       新規登録
+					   </a>
+	               </div>
+	           </div>
+
+	           <div class="table-container">
+	               <table class="table table-hover mb-0">
+	                   <thead>
+	                       <tr>
+	                           <th style="width: 15%">所属会社</th>
+	                           <th style="width: 12%">社員名</th>
+	                           <th style="width: 8%">性別</th>
+	                           <th style="width: 15%">就業種類</th>
+	                           <th style="width: 12%">入社日</th>
+	                           <th style="width: 12%">退社日</th>
+	                           <th style="width: 16%" class="action-column">編集</th>
+	                       </tr>
+	                   </thead>
+	                   <tbody>
+	                       <tr class="highlight-row" th:each="employee : ${employees}">
+	                           <td th:text="${employee.syouzokuKaisya}"></td>
+	                           <td th:text="${employee.lastNameKanji + ' ' + employee.firstNameKanji}"></td>
+	                           <td>
+	                               <span class="badge bg-primary status-badge" th:text="${employee.seibetu}"></span>
+	                           </td>
+	                           <td th:text="${employee.syokugyoKind}"></td>
+	                           <td th:text="${employee.nyuusyaDate}"></td>
+	                           <td th:text="${employee.taisyaDate ?: ''}"></td>>
+	                           <td class="action-column">
+									<a th:href="@{/employee/edit/{id}(id=${employee.syainId})}" 
+								   		class="btn btn-warning btn-action">
+								    	<i class="fas fa-edit"></i> 更新
+									</a>
+									<button class="btn btn-danger btn-action" th:attr="onclick=|openDeleteModal('${employee.syainId}', '${employee.lastNameKanji} ${employee.firstNameKanji}')|">
+									    <i class="fas fa-trash"></i> 削除
+									</button>
+	                           </td>
+	                       </tr>
+	                   </tbody>
+	               </table>
+	           </div>
+	       </div>
+	   </div>
+	   
+	   
+	   <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+	     <div class="modal-dialog">
+	       <div class="modal-content">
+	         <div class="modal-header">
+	           <h5 class="modal-title" id="deleteModalLabel">削除確認</h5>
+	           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="閉じる"></button>
+	         </div>
+	         <div class="modal-body">
+	           <span id="deleteUserName"></span>を削除してもよろしいでしょうか。
+	         </div>
+	         <div class="modal-footer">	        
+	           <form id="deleteForm" th:action="@{/employee/delete}" method="post">
+	               <input type="hidden" name="syainId" id="deleteSyainId" />
+	               <button type="submit" class="btn btn-danger">OK</button>
+	           </form>
+			   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
+	         </div>
+	       </div>
+	     </div>
+	   </div>
+</body>
+<!-- JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+	
+function validateStatus() {
+    const activeChecked = document.getElementById('active').checked;
+    const inactiveChecked = document.getElementById('inactive').checked;
+
+    if (!activeChecked && !inactiveChecked) {
+        alert('在職と非在職いずれにしても、1つのチェックが必須です。');
+        return false;
+    }
+	return true;
+
+    console.log("검색 실행");
+}
+function openDeleteModal(syainId, fullName) {
+	document.getElementById('deleteSyainId').value = syainId;
+	document.getElementById('deleteUserName').textContent = fullName;
+    var modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    modal.show();
+}
+</script>
+</html>
