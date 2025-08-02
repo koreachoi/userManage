@@ -32,9 +32,6 @@ public class employeeController {
 	
 	private Long zaisyoku;
 	
-	// @GetMapping("/list")
-	
-	//@RequestMapping(value = "/list", method = {RequestMethod.GET, RequestMethod.POST})
 	@GetMapping("/list")
 	public String getList(HttpSession session, Model model) {
 	    // 1. 세션에서 로그인 사용자 정보 꺼내기
@@ -49,12 +46,14 @@ public class employeeController {
 	    // 2. 필요한 데이터 조회 (회사정보, 직종정보 등)
 	    List<SettingDTO> syozokuKaisyaDTO = settingService.getSettingByCategoryList(1L, null, 1L);
 	    List<SettingDTO> syokugyoKindDTO = settingService.getSettingByCategoryList(3L, 4L, null);
+	    List<EmployeeDTO> allEmployeeDTO = employeeService.getAllEmployee();
 
 
 	    // 4. 화면에 쓸 데이터 model에 담기
 	    model.addAttribute("loginUser", userDto);          // 로그인 사용자 정보
 	    model.addAttribute("kaisya", syozokuKaisyaDTO);    // 소속 회사 정보
 	    model.addAttribute("syokugyo", syokugyoKindDTO);   // 직종 정보
+	    model.addAttribute("employees",allEmployeeDTO);
 
 	    return "/user/list"; // 목록 화면 템플릿
 		

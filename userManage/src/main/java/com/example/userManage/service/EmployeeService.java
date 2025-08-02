@@ -29,4 +29,8 @@ public class EmployeeService {
 	public void deleteBySyainId(Long syainId) {
 		employeeMapper.deleteBySyainId(syainId);
 	}
+	
+	public List<EmployeeDTO> getAllEmployee(){
+		return employeeMapper.findAllEmployee();
+	}
 }

@@ -2,7 +2,6 @@ package com.example.userManage.controller;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.example.userManage.DTO.SettingDTO;
 import com.example.userManage.DTO.UserDTO;
 import com.example.userManage.service.AccessService;
 import com.example.userManage.service.SettingService;
@@ -40,8 +38,6 @@ public class UserController {
            				 HttpServletResponse response) {
 		// 1.
 		UserDTO userDto = userService.getUserByUserCode(userCode);
-		List<SettingDTO> syozokuKaisyaDTO = settingService.getSettingByCategoryList(1L, null, 1L);
-		List<SettingDTO> syokugyoKindDTO = settingService.getSettingByCategoryList(3L,4L, null);
         // 2. 사용자 존재 여부 및 비밀번호 확인
 		if (userDto == null) {
 			// 로그인 실패 - 에러 메시지 전달
@@ -71,8 +67,6 @@ public class UserController {
         
         // 3.
         model.addAttribute("loginUser", userDto);
-        model.addAttribute("kaisya", syozokuKaisyaDTO);
-        model.addAttribute("syokugyo",syokugyoKindDTO);
         
         // 4
         accessService.createAccess(userDto.getUserId(), "login.html");

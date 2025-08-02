@@ -19,5 +19,7 @@ public interface EmployeeMapper {
 			);
 	
 	void deleteBySyainId(@Param("syainId") Long syainId);
+	
+	List<EmployeeDTO> findAllEmployee();
 
 }

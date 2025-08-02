@@ -4,60 +4,87 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.example.userManage.mapper.EmployeeMapper">
-	
-	<select id="findByFilter" parameterType="map" resultType="com.example.userManage.DTO.EmployeeDTO">
-	    SELECT sm.syain_id,
-	           sm.first_name_kanji,
-	           sm.last_name_kanji,
-	           CASE sm.seibetu
-	        		WHEN 1 THEN '男性'
-	        		WHEN 2 THEN '女性'
-	        		ELSE '不明'
-	    		END AS seibetu,
-	        	kaisya.value1 AS syouzoku_kaisya,
-	           sm.nyuusya_date,
-	           sm.taisya_date,
-	           syokugyo.value1 AS syokugyo_kind
-	    FROM syain_main sm
-	    LEFT JOIN tg_setting kaisya
-	        ON sm.syouzoku_kaisya = kaisya.category2
-	       AND kaisya.category1 = 1
-	       AND kaisya.category3 = 1
-	    LEFT JOIN tg_setting syokugyo
-	        ON sm.syokugyo_kind = syokugyo.category3
-	       AND syokugyo.category1 = 3
-	       AND syokugyo.category2 = 4
-	    WHERE 1 = 1
-	    AND sm.syokugyo_kind = #{syokugyoKind}
-	    <!-- 소속 회사 조건: null이면 전체 검색 -->
-	    <if test="syouzokuKaisya != null and syouzokuKaisya != ''">
-	        AND sm.syouzoku_kaisya = #{syouzokuKaisya}
-	    </if>
-	
-	    <!-- 이름 조건: null 또는 공백이면 조건 생략 -->
-	    <if test="firstNameKanji != null and firstNameKanji != ''">
-	        AND (
-	        	sm.first_name_kanji LIKE CONCAT('%', #{firstNameKanji}, '%')
-	        	OR sm.last_name_kanji LIKE CONCAT('%', #{firstNameKanji}, '%')
-	    	)
-	    </if>
-	
+
+	<select id="findByFilter" parameterType="map"
+		resultType="com.example.userManage.DTO.EmployeeDTO">
+		SELECT sm.syain_id,
+			sm.first_name_kanji,
+			sm.last_name_kanji,
+			CASE sm.seibetu
+			WHEN 1 THEN '男性'
+			WHEN 2 THEN '女性'
+			ELSE '不明'
+			END AS seibetu,
+			kaisya.value1 AS syouzoku_kaisya,
+			sm.nyuusya_date,
+			sm.taisya_date,
+			syokugyo.value1 AS syokugyo_kind
+		FROM syain_main sm
+			LEFT JOIN tg_setting kaisya
+			ON sm.syouzoku_kaisya = kaisya.category2
+			AND kaisya.category1 = 1
+			AND kaisya.category3 = 1
+			LEFT JOIN tg_setting syokugyo
+			ON sm.syokugyo_kind = syokugyo.category3
+			AND syokugyo.category1 = 3
+			AND syokugyo.category2 = 4
+		WHERE 1 = 1
+		AND sm.syokugyo_kind = #{syokugyoKind}
+		<!-- 소속 회사 조건: null이면 전체 검색 -->
+		<if test="syouzokuKaisya != null and syouzokuKaisya != ''">
+			AND sm.syouzoku_kaisya = #{syouzokuKaisya}
+		</if>
+
+		<!-- 이름 조건: null 또는 공백이면 조건 생략 -->
+		<if test="firstNameKanji != null and firstNameKanji != ''">
+			AND (
+			sm.first_name_kanji LIKE CONCAT('%', #{firstNameKanji}, '%')
+			OR sm.last_name_kanji LIKE CONCAT('%', #{firstNameKanji}, '%')
+			)
+		</if>
+
 		<!-- 在職/退職 조건 -->
 		<if test="zaisyoku != null">
-		    <if test="zaisyoku == 1">
-		        AND sm.taisya_date IS NULL
-		    </if>
-		    <if test="zaisyoku == 0">
-		        AND sm.taisya_date IS NOT NULL
-		    </if>
+			<if test="zaisyoku == 1">
+				AND sm.taisya_date IS NULL
+			</if>
+			<if test="zaisyoku == 0">
+				AND sm.taisya_date IS NOT NULL
+			</if>
 		</if>
-		
+
 	</select>
-	
-    <delete id="deleteBySyainId" parameterType="map">
-        DELETE FROM syain_main
-        WHERE syain_id = #{syainId}
-    </delete>
-	
-	
+
+	<delete id="deleteBySyainId" parameterType="map">
+		DELETE FROM syain_main
+		WHERE syain_id = #{syainId}
+	</delete>
+
+
+	<select id="findAllEmployee"
+		resultType="com.example.userManage.DTO.EmployeeDTO">
+		SELECT sm.syain_id,
+			sm.first_name_kanji,
+			sm.last_name_kanji,
+			CASE sm.seibetu
+			WHEN 1 THEN '男性'
+			WHEN 2 THEN '女性'
+			ELSE '不明'
+			END AS seibetu,
+			kaisya.value1 AS syouzoku_kaisya,
+			sm.nyuusya_date,
+			sm.taisya_date,
+			syokugyo.value1 AS syokugyo_kind
+		FROM syain_main sm
+			LEFT JOIN tg_setting kaisya
+			ON sm.syouzoku_kaisya = kaisya.category2
+			AND kaisya.category1 = 1
+			AND kaisya.category3 = 1
+			LEFT JOIN tg_setting syokugyo
+			ON sm.syokugyo_kind = syokugyo.category3
+			AND syokugyo.category1 = 3
+			AND syokugyo.category2 = 4
+		WHERE 1 = 1
+	</select>
+
 </mapper>
