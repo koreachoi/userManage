@@ -5,6 +5,19 @@
 
 <mapper namespace="com.example.userManage.mapper.EmployeeMapper">
 
+	<select id="findBySyainId" parameterType="long" resultType="com.example.userManage.DTO.EmployeeDTO">
+		SELECT
+			syain_id,
+			first_name_kanji,
+			last_name_kanji,
+			seibetu,
+			syouzoku_kaisya,
+			nyuusya_date,
+			taisya_date,
+			syokugyo_kind
+		FROM syain_main
+		WHERE syain_id = #{syainId}
+	</select>
 	<select id="findByFilter" parameterType="map"
 		resultType="com.example.userManage.DTO.EmployeeDTO">
 		SELECT sm.syain_id,
@@ -98,7 +111,7 @@
 		WHERE 1 = 1
 	</select>
 	
-	<insert id="createSyain" parameterType="com.example.userManage.DTO.EmployeeInsertDTO">
+	<insert id="createSyain" parameterType="com.example.userManage.DTO.EmployeeRequestDTO">
 		INSERT INTO syain_main (
 			last_name_kanji,
 			first_name_kanji,
@@ -116,5 +129,20 @@
 			#{syokugyoKind}
 		)
 	</insert>
+	
+	<update id="updateSyain" parameterType="com.example.userManage.DTO.EmployeeRequestDTO">
+		UPDATE syain_main 
+	    <set>
+	        <if test="lastNameKanji != null">last_name_kanji = #{lastNameKanji},</if>
+	        <if test="firstNameKanji != null">first_name_kanji = #{firstNameKanji},</if>
+	        <if test="seibetu != null">seibetu = #{seibetu},</if>
+	        <if test="syouzokuKaisya != null">syouzoku_kaisya = #{syouzokuKaisya},</if>
+	        <if test="nyuusyaDate != null">nyuusya_date = #{nyuusyaDate},</if>
+	        <if test="taisyaDate != null">taisya_date = #{taisyaDate},</if>
+	        <if test="syokugyoKind != null">syokugyo_kind = #{syokugyoKind}</if>
+	    </set>
+		WHERE 
+			syain_id = #{syainId}
+	</update>
 
 </mapper>

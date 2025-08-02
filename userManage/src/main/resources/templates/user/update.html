@@ -3,7 +3,148 @@
 
 <body>
 	<div th:replace="common/header :: header"></div>
+	<br>
+	<form th:action="@{/employeeUpdate}" th:object="${syain}" method="post" 　onsubmit="return validateRegisterForm();">
+		<div class="border rounded p-3 mb-3">
+			<h5>基本情報</h5>
+			<hr>
+			<div class="mb-3 row">
+				<div class="col-sm-4">
+					<input type="hidden" id="syainId" name="syainId" th:field="*{syainId}" class="form-control" />
+				</div>
+			</div>
+			<!-- 名前 -->
+			<div class="mb-3 row">
+				<label class="col-sm-2 col-form-label">社員名（漢字）:</label>
+				<div class="col-sm-2">
+					<input type="text" id="lastNameKanji" th:field="*{lastNameKanji}" class="form-control"
+						placeholder="姓" />
+				</div>
+				<div class="col-sm-2">
+					<input type="text" id="firstNameKanji" th:field="*{firstNameKanji}" class="form-control"
+						placeholder="名" />
+				</div>
+				<div class="col-sm-2 align-self-center">
+					<span class="text-danger fw-bold">必須</span>
+				</div>
+			</div>
 
+			<!-- 性別 -->
+			<div class="border rounded p-3 mb-3">
+				<div class="mb-3 row align-items-center">
+					<label class="col-sm-2 col-form-label mb-0">性別:</label>
+					<div class="col-sm-10 d-flex align-items-center">
+						<div class="form-check form-check-inline">
+							<input class="form-check-input" type="radio" th:field="*{seibetu}" id="male" value="1" />
+							<label class="form-check-label" for="male">男</label>
+						</div>
+
+						<div class="form-check form-check-inline">
+							<input class="form-check-input" type="radio" th:field="*{seibetu}" id="female" value="2" />
+							<label class="form-check-label" for="female">女</label>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="border rounded p-3 mb-3">
+				<h5>会社関連情報</h5>
+				<hr>
+				<!-- 所属会社 -->
+				<div class="mb-3 row">
+					<label for="syouzokuKaisya" class="col-sm-2 col-form-label">所属会社</label>
+					<div class="col-sm-4">
+						<select id="syouzokuKaisya" th:field="*{syouzokuKaisya}" class="form-select">
+							<option th:each="item : ${kaisya}" th:value="${item.category2}" th:text="${item.value1}">
+							</option>
+						</select>
+					</div>
+				</div>
+
+				<!-- 入社日 -->
+				<div class="mb-3 row">
+					<label for="nyuusyaDate" class="col-sm-2 col-form-label">入社日</label>
+					<div class="col-sm-4">
+						<input type="date" id="nyuusyaDate" name="nyuusyaDate"
+							th:value="${syain.nyuusyaDate != null ? #temporals.format(syain.nyuusyaDate, 'yyyy-MM-dd') : ''}"
+							class="form-control">
+					</div>
+				</div>
+
+				<!-- 退社日 -->
+				<div class="mb-3 row">
+					<label for="taisyaDate" class="col-sm-2 col-form-label">退社日</label>
+					<div class="col-sm-4 d-flex align-items-center">
+						<input type="text" id="taisyaDate" name="taisyaDate"
+							th:value="${syain.taisyaDate != null ? #temporals.format(syain.taisyaDate, 'yyyy-MM-dd') : ''}"
+							class="form-control" />
+						<span class="ms-2 small text-muted">※YYYY-MM-DD</span>
+					</div>
+				</div>
+
+				<!-- 職業種類 -->
+				<div class="mb-3 row">
+					<label for="syokugyoKind" class="col-sm-2 col-form-label">職業種類</label>
+					<div class="col-sm-4">
+						<select id="syokugyoKind" th:field="*{syokugyoKind}" class="form-select">
+							<option th:each="item : ${syokugyo}" th:value="${item.category3}" th:text="${item.value1}">
+							</option>
+						</select>
+					</div>
+				</div>
+			</div>
+
+			<div class="text-center mt-4 mb-5">
+				<hr>
+				<button type="submit" class="btn btn-primary px-4 fw-bold">
+					更　新
+				</button>
+			</div>
+	</form>
 </body>
+<script>
+	function validateRegisterForm() {
+		const lastNameKanji = document.getElementById("lastNameKanji");
+		const firstNameKanji = document.getElementById("firstNameKanji");
+
+		// 姓 (全角 / 15자 이내)
+		const lastName = lastNameKanji.value.trim();
+		if (!lastName) {
+			alert("姓(漢字)を入力してください。");
+			lastNameKanji.focus();
+			return false;
+		}
+		if (!/^[^\x01-\x7E\xA1-\xDF]+$/.test(lastName)) {
+			alert("姓(漢字)は全角文字で入力してください。");
+			lastNameKanji.focus();
+			return false;
+		}
+		if (lastName.length > 15) {
+			alert("姓(漢字)は15文字以内で入力してください。");
+			lastNameKanji.focus();
+			return false;
+		}
+
+		// 名 (全角 / 15자 이내)
+		const firstName = firstNameKanji.value.trim();
+		if (!firstName) {
+			alert("名(漢字)を入力してください。");
+			firstNameKanji.focus();
+			return false;
+		}
+		if (!/^[^\x01-\x7E\xA1-\xDF]+$/.test(firstName)) {
+			alert("名(漢字)は全角文字で入力してください。");
+			firstNameKanji.focus();
+			return false;
+		}
+		if (firstName.length > 15) {
+			alert("名(漢字)は15文字以内で入力してください。");
+			firstNameKanji.focus();
+			return false;
+		}
+
+		return true;
+	}
+</script>
 
 </html>

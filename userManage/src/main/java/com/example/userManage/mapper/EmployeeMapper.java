@@ -6,10 +6,14 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import com.example.userManage.DTO.EmployeeDTO;
-import com.example.userManage.DTO.EmployeeInsertDTO;
+import com.example.userManage.DTO.EmployeeRequestDTO;
 
 @Mapper
 public interface EmployeeMapper {
+	
+	EmployeeDTO findBySyainId(@Param("syainId") Long syainId);
+	
+	List<EmployeeDTO> findAllEmployee();
 	
 	List<EmployeeDTO> findByFilter(@Param("firstNameKanji") String firstNameKanji,
 								   @Param("lastNameKanji") String lastNameKanji,
@@ -20,8 +24,7 @@ public interface EmployeeMapper {
 	
 	void deleteBySyainId(@Param("syainId") Long syainId);
 	
-	List<EmployeeDTO> findAllEmployee();
+	void createSyain(EmployeeRequestDTO dto);
 	
-	void createSyain(EmployeeInsertDTO dto);
-	
+	void updateSyain(EmployeeRequestDTO dto);
 }

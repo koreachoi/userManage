@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.userManage.DTO.EmployeeDTO;
-import com.example.userManage.DTO.EmployeeInsertDTO;
+import com.example.userManage.DTO.EmployeeRequestDTO;
 import com.example.userManage.DTO.SettingDTO;
 import com.example.userManage.DTO.UserDTO;
 import com.example.userManage.service.EmployeeService;
@@ -55,7 +55,8 @@ public class employeeController {
 		model.addAttribute("loginUser", userDto); // 로그인 사용자 정보
 		model.addAttribute("kaisya", syozokuKaisyaDTO); // 소속 회사 정보
 		model.addAttribute("syokugyo", syokugyoKindDTO); // 직종 정보
-		model.addAttribute("employees", allEmployeeDTO);
+		model.addAttribute("employees", allEmployeeDTO); //
+		model.addAttribute("currentPage", "listPage"); // 페이지 식별용 문자열
 
 		return "/user/list"; // 목록 화면 템플릿
 
@@ -94,6 +95,7 @@ public class employeeController {
 		model.addAttribute("kaisya", syozokuKaisyaDTO);
 		model.addAttribute("syokugyo", syokugyoKindDTO);
 		model.addAttribute("employees", employeesDTO);
+		model.addAttribute("currentPage", "listPage"); // 페이지 식별용 문자열
 		return "/user/list";
 	}
 
@@ -114,6 +116,7 @@ public class employeeController {
 		model.addAttribute("syokugyoList", syokugyoKindDTO);
 		model.addAttribute("kaisyaList", syozokuKaisyaDTO);
 		model.addAttribute("loginUser", userDto);
+		model.addAttribute("currentPage", "specialPage"); // 페이지 식별용 문자열
 
 		return "/user/register";
 	}
@@ -123,43 +126,70 @@ public class employeeController {
 			@RequestParam("lastNameKanji") String lastNameKanji,
 			@RequestParam("firstNameKanji") String firstNameKanji,
 			@RequestParam("seibetu") Long seibetu,
-			@RequestParam("company") Long company,
+			@RequestParam("syouzokuKaisya") Long syouzokuKaisya,
 			@RequestParam("nyuusyaDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate nyuusyaDate,
 			@RequestParam("syokugyoKind") Long syokugyoKind,
 			HttpSession session,
 			Model model) {
-
-		EmployeeInsertDTO employeeInsertDto = new EmployeeInsertDTO(lastNameKanji, firstNameKanji, seibetu, company,
-				nyuusyaDate, nyuusyaDate, syokugyoKind);
-		employeeService.createSyain(employeeInsertDto);
-
+		
+		//
+		EmployeeRequestDTO employeeDto = new EmployeeRequestDTO(null, firstNameKanji, lastNameKanji, seibetu, syouzokuKaisya, nyuusyaDate, nyuusyaDate, syokugyoKind);
+		employeeService.createSyain(employeeDto);
+		//
 		UserDTO userDto = (UserDTO) session.getAttribute("loginUser");
 		session.setAttribute("loginUser", userDto);
-
-		List<SettingDTO> syozokuKaisyaDTO = settingService.getSettingByCategoryList(1L, null, 1L);
-		List<SettingDTO> syokugyoKindDTO = settingService.getSettingByCategoryList(3L, 4L, null);
-		List<EmployeeDTO> allEmployeeDTO = employeeService.getAllEmployee();
-
-		// 4. 화면에 쓸 데이터 model에 담기
+		// 
 		model.addAttribute("loginUser", userDto); // 로그인 사용자 정보
-		model.addAttribute("kaisya", syozokuKaisyaDTO); // 소속 회사 정보
-		model.addAttribute("syokugyo", syokugyoKindDTO); // 직종 정보
-		model.addAttribute("employees", allEmployeeDTO);
 
-		return "/user/list";
+		return "redirect:/list";
 	}
 
 	@GetMapping("/employee/edit/{id}")
 	public String moveUpdatePage(@PathVariable("id") Long syainId, HttpSession session, Model model) {
+		
 		UserDTO userDto = (UserDTO) session.getAttribute("loginUser");
+		EmployeeDTO employeeDto = employeeService.findBySyainId(syainId);
+		List<SettingDTO> syozokuKaisyaDTO = settingService.getSettingByCategoryList(1L, null, 1L);
+		List<SettingDTO> syokugyoKindDTO = settingService.getSettingByCategoryList(3L, 4L, null);
+
 		if (userDto == null) {
 			System.out.println("null");
 		}
 		session.setAttribute("loginUser", userDto);
 		model.addAttribute("loginUser", userDto);
+		model.addAttribute("syain", employeeDto);
+		model.addAttribute("kaisya", syozokuKaisyaDTO); // 소속 회사 정보
+		model.addAttribute("syokugyo", syokugyoKindDTO); // 직종 정보
+		model.addAttribute("currentPage", "specialPage"); // 페이지 식별용 문자열
+		
 		// 3. 수정 화면(view)으로 이동
 		return "/user/update";
 	}
+	
+	@PostMapping("/employeeUpdate")
+	public String actionUpdate(@RequestParam("syainId") Long syainId,
+			@RequestParam("lastNameKanji") String lastNameKanji,
+			@RequestParam("firstNameKanji") String firstNameKanji,
+			@RequestParam("seibetu") Long seibetu,
+			@RequestParam("syouzokuKaisya") Long syouzokuKaisya,
+			@RequestParam("nyuusyaDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate nyuusyaDate,
+			@RequestParam(value = "taisyaDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd" )  LocalDate taisyaDate,
+			@RequestParam("syokugyoKind") Long syokugyoKind,
+			HttpSession session,
+			Model model) {
+		System.out.println("입사일: " + nyuusyaDate);
+		System.out.println("퇴사일: " + taisyaDate);
+		EmployeeRequestDTO employeeDto = new EmployeeRequestDTO(syainId, firstNameKanji, lastNameKanji, seibetu, syouzokuKaisya, nyuusyaDate, taisyaDate, syokugyoKind);
+		employeeService.updateSyain(employeeDto);
+		//
+		UserDTO userDto = (UserDTO) session.getAttribute("loginUser");
+		session.setAttribute("loginUser", userDto);
+		// 
+		model.addAttribute("loginUser", userDto); // 로그인 사용자 정보
+		
+		return  "redirect:/list";
+	}
+	
 
 	@PostMapping("/employee/delete")
 	public String deleteEmployee(@RequestParam("syainId") Long syainId, RedirectAttributes redirectAttributes,

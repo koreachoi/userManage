@@ -82,19 +82,26 @@
 	                登録日時：<span th:if="${session.loginTime}" th:text="${session.loginTime}"></span>
 	            </div>
 
-	            <!-- 사용자 정보 -->
-	            <div class="col-md-6 small text-end">
-	                ユーザ名：<span th:text="${loginUser.userName}"></span>　
-	                権限：<span th:text="${loginUser.userRole}"></span>　
-					<div th:if="${currentPage}">
-						<span th:text="${currentPage}"></span>
-					</div>
-					<form th:action="@{/logout}" method="post" style="display: inline;">
-					    <button type="submit" class="btn btn-outline-danger btn-sm ms-2">
-					        <i class="fas fa-sign-out-alt"></i> ログアウト
-					    </button>
-					</form>
-	            </div>
+				<div class="col-md-6 small text-end">
+				    ユーザ名：<span th:text="${loginUser.userName}"></span>　
+				    権限：<span th:text="${loginUser.userRole}"></span>　
+
+				    <!-- 로그아웃 버튼 (기본) -->
+				    <span th:if="${currentPage != 'specialPage'}">
+				        <form th:action="@{/logout}" method="post" style="display: inline;">
+				            <button type="submit" class="btn btn-outline-danger btn-sm ms-2">
+				                <i class="fas fa-sign-out-alt"></i> ログアウト
+				            </button>
+				        </form>
+				    </span>
+
+				    <!-- 다른 페이지 전용 버튼 (예: メニュー画面へ 이동) -->
+				    <span th:if="${currentPage == 'specialPage'}">
+				        <a th:href="@{/list}" class="btn btn-outline-primary btn-sm ms-2">
+				            <i class="fas fa-home"></i> 社員管理画面
+				        </a>
+				    </span>
+				</div>
 	        </div>
 	    </div>
 	</div>
