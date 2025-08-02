@@ -11,17 +11,14 @@ import lombok.Setter;
 @Setter
 @Getter
 @Data
-public class EmployeeDTO {
-
-	private Long syainId;
+public class EmployeeInsertDTO {
+	
 	private String firstNameKanji;
 	private String lastNameKanji;
-	private String seibetu;
-	private String syouzokuKaisya;
+	private Long seibetu;
+	private Long syouzokuKaisya;
 	private LocalDate nyuusyaDate;
 	private LocalDate taisyaDate;
-	private String syokugyoKind;
+	private Long syokugyoKind;
+	
 }
-
-
-

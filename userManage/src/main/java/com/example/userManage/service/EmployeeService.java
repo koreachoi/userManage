@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.userManage.DTO.EmployeeDTO;
+import com.example.userManage.DTO.EmployeeInsertDTO;
 import com.example.userManage.mapper.EmployeeMapper;
 
 @Service
@@ -32,5 +33,9 @@ public class EmployeeService {
 	
 	public List<EmployeeDTO> getAllEmployee(){
 		return employeeMapper.findAllEmployee();
+	}
+
+	public void createSyain(EmployeeInsertDTO dto) {
+	    employeeMapper.createSyain(dto);
 	}
 }
