@@ -57,9 +57,7 @@
 					<label for="syouzokuKaisya" class="col-sm-2 col-form-label">所属会社</label>
 					<div class="col-sm-4">
 						<select id="syouzokuKaisya" name="syouzokuKaisya" class="form-select">
-							<option th:each="item : ${kaisyaList}" th:value="${item.category2}"
-								th:text="${item.value1}">
-							</option>
+							<option th:each="item : ${kaisyaList}" th:value="${item.category2}" th:text="${item.value1}"></option>
 						</select>
 					</div>
 
@@ -77,8 +75,7 @@
 				<div class="mb-3 row">
 					<label for="taisyaDate" class="col-sm-2 col-form-label">退社日</label>
 					<div class="col-sm-4 d-flex align-items-center">
-						<input type="text" id="taisyaDate" name="taisyaDate" th:value="${taisyaDate}"
-							class="form-control" />
+						<input type="text" id="taisyaDate" name="taisyaDate" th:value="${taisyaDate}" class="form-control" />
 						<span class="ms-2 small text-muted">※YYYY-MM-DD</span>
 					</div>
 				</div>
@@ -88,8 +85,7 @@
 					<label for="syokugyoKind" class="col-sm-2 col-form-label">職業種類</label>
 					<div class="col-sm-4">
 						<select id="syokugyoKind" name="syokugyoKind" class="form-select">
-							<option th:each="item : ${syokugyoList}" th:value="${item.category3}"
-								th:text="${item.value1}">
+							<option th:each="item : ${syokugyoList}" th:value="${item.category3}" th:text="${item.value1}">
 							</option>
 						</select>
 					</div>
@@ -116,20 +112,16 @@
 							<!-- 銀行コード～支店名のid名を、それぞれ bank_code、bank_name、branch_code、branch_name、にして下さい。-->
 							<tr>
 								<td>
-									<input type="text" id="bank_code" name="bank_code"
-										class="form-control text-center" />
+									<input type="text" id="bank_code" name="bank_code" class="form-control text-center" />
 								</td>
 								<td>
-									<input type="text" id="bank_name" name="bank_name"
-										class="form-control text-center" />
+									<input type="text" id="bank_name" name="bank_name" class="form-control text-center" />
 								</td>
 								<td>
-									<input type="text" id="branch_code" name="branch_code"
-										class="form-control text-center" />
+									<input type="text" id="branch_code" name="branch_code" class="form-control text-center" />
 								</td>
 								<td>
-									<input type="text" id="branch_name" name="branch_name"
-										class="form-control text-center" />
+									<input type="text" id="branch_name" name="branch_name" class="form-control text-center" />
 								</td>
 								<td>
 									<select id="kouza_type" name="kouza_type" class="form-select text-center">
@@ -140,8 +132,7 @@
 									</select>
 								</td>
 								<td>
-									<input type="text" id="kouza_number" name="kouza_number"
-										class="form-control text-center">
+									<input type="text" id="kouza_number" name="kouza_number" class="form-control text-center">
 								</td>
 								<td>
 									<input type="text" id="meigi" name="meigi" class="form-control text-center">

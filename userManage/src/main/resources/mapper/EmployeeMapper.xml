@@ -118,6 +118,7 @@
 			seibetu,
 			syouzoku_kaisya,
 			nyuusya_date,
+			taisya_date,
 			syokugyo_kind
 		)
 		VALUES (
@@ -126,6 +127,7 @@
 			#{seibetu},
 			#{syouzokuKaisya},
 			#{nyuusyaDate},
+			#{taisyaDate},
 			#{syokugyoKind}
 		)
 	</insert>

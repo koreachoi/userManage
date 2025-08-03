@@ -1,6 +1,7 @@
 package com.example.userManage.controller;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 import jakarta.servlet.http.HttpSession;
@@ -35,33 +36,35 @@ public class employeeController {
 
 	private Long zaisyoku;
 
+	// 社員管理画面
 	@GetMapping("/list")
 	public String getList(HttpSession session, Model model) {
-		// 1. 세션에서 로그인 사용자 정보 꺼내기
+		
+		// 1．セッションからユーザー情報を取得する
+		// ログインしていない場合はログインページにリダイレクトする
 		UserDTO userDto = (UserDTO) session.getAttribute("loginUser");
 		session.setAttribute("loginUser", userDto);
-
 		if (userDto == null) {
-			// 로그인 안 했으면 로그인 페이지로 이동!
 			return "redirect:/login";
 		}
 
-		// 2. 필요한 데이터 조회 (회사정보, 직종정보 등)
+		// 2. 必要なデータを参照する。
 		List<SettingDTO> syozokuKaisyaDTO = settingService.getSettingByCategoryList(1L, null, 1L);
 		List<SettingDTO> syokugyoKindDTO = settingService.getSettingByCategoryList(3L, 4L, null);
 		List<EmployeeDTO> allEmployeeDTO = employeeService.getAllEmployee();
 
-		// 4. 화면에 쓸 데이터 model에 담기
-		model.addAttribute("loginUser", userDto); // 로그인 사용자 정보
-		model.addAttribute("kaisya", syozokuKaisyaDTO); // 소속 회사 정보
-		model.addAttribute("syokugyo", syokugyoKindDTO); // 직종 정보
-		model.addAttribute("employees", allEmployeeDTO); //
-		model.addAttribute("currentPage", "listPage"); // 페이지 식별용 문자열
+		// 3. 画面表示用のデータをModelに格納する
+		model.addAttribute("loginUser", userDto); // ログインユーザー情報
+		model.addAttribute("kaisya", syozokuKaisyaDTO); // 所属会社情報
+		model.addAttribute("syokugyo", syokugyoKindDTO); // 職業種類情報
+		model.addAttribute("employees", allEmployeeDTO); //社員情報
+		model.addAttribute("currentPage", "listPage"); // ページ確認用情報
 
-		return "/user/list"; // 목록 화면 템플릿
+		return "/user/list"; // 社員管理画面
 
 	}
 
+	// 社員情報参照
 	@GetMapping("/employees")
 	public String search(HttpSession session,
 			@RequestParam Long company,
@@ -69,58 +72,79 @@ public class employeeController {
 			@RequestParam String employeeName,
 			@RequestParam(name = "status", required = false) List<String> statusList,
 			Model model) {
-
+		
+		// 1．セッションからユーザー情報を取得する
+		// ログインしていない場合はログインページにリダイレクトする
+		UserDTO userDto = (UserDTO) session.getAttribute("loginUser");
+		session.setAttribute("loginUser", userDto);
+		if (userDto == null) {
+			return "redirect:/login";
+		}
+		
+		// 2. 在職確認
+		// 在職チェックがNullではない場合はチェックを行う
+		// 両側チェックされている場合は、全体を条件で設定しておく
+		// 在職だけチェックされている場合は、在職の変数の値を１Lで設定しておく
+		// 逆の場合は０で設定しておく
 		if (statusList != null) {
 			if (statusList.contains("active") && statusList.contains("inactive")) {
-				// 둘 다 체크됨 → 전체 검색
-				zaisyoku = null; // 조건 생략
+				zaisyoku = null; 
 			} else if (statusList.contains("active")) {
 				zaisyoku = 1L; // 재직 중
 			} else if (statusList.contains("inactive")) {
 				zaisyoku = 0L; // 퇴사
 			}
 		}
+		// 所属会社確認
+		// 所属会社の値が０(全て)の場合はNullで設定しておく
 		if (company == 0) {
 			company = null;
 		}
-
+		
+		// 3. 必要なデータを参照する。
 		List<EmployeeDTO> employeesDTO = employeeService.getByFilter(employeeName, employeeName, company, jobType,
 				zaisyoku);
 		List<SettingDTO> syozokuKaisyaDTO = settingService.getSettingByCategoryList(1L, null, 1L);
 		List<SettingDTO> syokugyoKindDTO = settingService.getSettingByCategoryList(3L, 4L, null);
-		UserDTO userDto = (UserDTO) session.getAttribute("loginUser");
-		session.setAttribute("loginUser", userDto);
 
-		model.addAttribute("loginUser", userDto);
-		model.addAttribute("kaisya", syozokuKaisyaDTO);
-		model.addAttribute("syokugyo", syokugyoKindDTO);
-		model.addAttribute("employees", employeesDTO);
-		model.addAttribute("currentPage", "listPage"); // 페이지 식별용 문자열
-		return "/user/list";
+		// 4. 画面表示用のデータをModelに格納する
+		model.addAttribute("loginUser", userDto); // ログインユーザー情報
+		model.addAttribute("kaisya", syozokuKaisyaDTO); // 所属会社情報
+		model.addAttribute("syokugyo", syokugyoKindDTO); // 職業種類情報
+		model.addAttribute("employees", employeesDTO); // 社員情報
+		model.addAttribute("currentPage", "listPage"); // ページ確認用情報
+		
+		return "/user/list"; // 社員管理画面
 	}
 
+	// 社員情報登録画面へ遷移
 	@GetMapping("/register")
 	public String moveRegisterPage(HttpSession session, Model model) {
-
+		
+		// 1．セッションからユーザー情報を取得する
+		// ログインしていない場合はログインページにリダイレクトする
 		UserDTO userDto = (UserDTO) session.getAttribute("loginUser");
+		session.setAttribute("loginUser", userDto);
+		if (userDto == null) {
+			return "redirect:/login";
+		}
+		
+		// 2. 必要なデータを参照する。
 		List<SettingDTO> syozokuKaisyaDTO = settingService.getSettingByCategoryList(1L, null, 1L);
 		List<SettingDTO> syokugyoKindDTO = settingService.getSettingByCategoryList(3L, 4L, null);
 		List<SettingDTO> osDTO = settingService.getSettingByCategoryList(3L, 6L, null);
-		if (userDto == null) {
-			System.out.println("null");
-		}
 
-		session.setAttribute("loginUser", userDto);
-
-		model.addAttribute("osList", osDTO);
-		model.addAttribute("syokugyoList", syokugyoKindDTO);
-		model.addAttribute("kaisyaList", syozokuKaisyaDTO);
-		model.addAttribute("loginUser", userDto);
-		model.addAttribute("currentPage", "specialPage"); // 페이지 식별용 문자열
-
-		return "/user/register";
+		// 3. 画面表示用のデータをModelに格納する
+		model.addAttribute("loginUser", userDto); // ログインユーザー情報
+		model.addAttribute("syokugyoList", syokugyoKindDTO); // 所属会社情報
+		model.addAttribute("kaisyaList", syozokuKaisyaDTO); // 職業種類情報
+		model.addAttribute("osList", osDTO); // OSデータリスト情報
+		model.addAttribute("currentPage", "specialPage"); // ページ確認用情報
+		
+		return "/user/register"; // 社員情報登録画面
 	}
 
+	// 社員情報登録機能
 	@PostMapping("/employeeRegister")
 	public String actionRegister(@RequestParam("syainId") String syainId,
 			@RequestParam("lastNameKanji") String lastNameKanji,
@@ -128,44 +152,75 @@ public class employeeController {
 			@RequestParam("seibetu") Long seibetu,
 			@RequestParam("syouzokuKaisya") Long syouzokuKaisya,
 			@RequestParam("nyuusyaDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate nyuusyaDate,
+			@RequestParam("taisyaDate") String taisyaDateStr,
 			@RequestParam("syokugyoKind") Long syokugyoKind,
 			HttpSession session,
 			Model model) {
 		
-		//
-		EmployeeRequestDTO employeeDto = new EmployeeRequestDTO(null, firstNameKanji, lastNameKanji, seibetu, syouzokuKaisya, nyuusyaDate, nyuusyaDate, syokugyoKind);
-		employeeService.createSyain(employeeDto);
-		//
+		// 1．セッションからユーザー情報を取得する
+		// ログインしていない場合はログインページにリダイレクトする
 		UserDTO userDto = (UserDTO) session.getAttribute("loginUser");
 		session.setAttribute("loginUser", userDto);
-		// 
-		model.addAttribute("loginUser", userDto); // 로그인 사용자 정보
+		if (userDto == null) {
+			return "redirect:/login";
+		}
+		
+		// 2．パラメーターtaisyaDateの値がnullでない場合
+		// フォーマットを確認し、正しい形式のものだけを受け取る
+		LocalDate taisyaDate = null;
+	    if (taisyaDateStr != null && !taisyaDateStr.isBlank()) {
+	        if (taisyaDateStr.matches("\\d{4}-\\d{2}-\\d{2}")) {
+	        	 // "0000-00-00"の場合はLocalDateに変換できないため、別途処理する
+	            if (!taisyaDateStr.equals("0000-00-00")) {
+	                try {
+	                    taisyaDate = LocalDate.parse(taisyaDateStr);
+	                } catch (DateTimeParseException e) {
+	                	// 無効なフォーマットの場合はログのみ出力する
+	                    System.out.println("Invalid date: " + taisyaDateStr);
+	                }
+	            }
+	        }
+	    }
+		
+		// 3. 受け取ったパラメーターをもとにDTOインスタンスを生成する
+		// 生成したインスタンスを使ってDBのテーブルを登録する
+		EmployeeRequestDTO employeeDto = new EmployeeRequestDTO(null, firstNameKanji, lastNameKanji, seibetu, syouzokuKaisya, nyuusyaDate, taisyaDate, syokugyoKind);
+		employeeService.createSyain(employeeDto);
 
-		return "redirect:/list";
+		// 4. 画面表示用のデータをModelに格納する
+		model.addAttribute("loginUser", userDto); // ログインユーザー情報
+
+		return "redirect:/list"; //社員管理画面へ遷移
 	}
 
+	// 社員情報更新画面へ遷移
 	@GetMapping("/employee/edit/{id}")
 	public String moveUpdatePage(@PathVariable("id") Long syainId, HttpSession session, Model model) {
 		
+		// 1．セッションからユーザー情報を取得する
+		// ログインしていない場合はログインページにリダイレクトする
 		UserDTO userDto = (UserDTO) session.getAttribute("loginUser");
+		session.setAttribute("loginUser", userDto);
+		if (userDto == null) {
+			return "redirect:/login";
+		}
+		
+		// 2. 必要なデータを参照する。
 		EmployeeDTO employeeDto = employeeService.findBySyainId(syainId);
 		List<SettingDTO> syozokuKaisyaDTO = settingService.getSettingByCategoryList(1L, null, 1L);
 		List<SettingDTO> syokugyoKindDTO = settingService.getSettingByCategoryList(3L, 4L, null);
 
-		if (userDto == null) {
-			System.out.println("null");
-		}
-		session.setAttribute("loginUser", userDto);
-		model.addAttribute("loginUser", userDto);
-		model.addAttribute("syain", employeeDto);
-		model.addAttribute("kaisya", syozokuKaisyaDTO); // 소속 회사 정보
-		model.addAttribute("syokugyo", syokugyoKindDTO); // 직종 정보
-		model.addAttribute("currentPage", "specialPage"); // 페이지 식별용 문자열
+		// 3. 画面表示用のデータをModelに格納する
+		model.addAttribute("loginUser", userDto); // ログインユーザー情報
+		model.addAttribute("syain", employeeDto); // 選択社員情報
+		model.addAttribute("kaisya", syozokuKaisyaDTO); // 所属会社情報
+		model.addAttribute("syokugyo", syokugyoKindDTO); // 職業種類情報
+		model.addAttribute("currentPage", "specialPage"); // ページ確認用情報
 		
-		// 3. 수정 화면(view)으로 이동
-		return "/user/update";
+		return "/user/update"; //社員情報更新画面へ遷移
 	}
 	
+	// 社員情報更新機能
 	@PostMapping("/employeeUpdate")
 	public String actionUpdate(@RequestParam("syainId") Long syainId,
 			@RequestParam("lastNameKanji") String lastNameKanji,
@@ -173,40 +228,71 @@ public class employeeController {
 			@RequestParam("seibetu") Long seibetu,
 			@RequestParam("syouzokuKaisya") Long syouzokuKaisya,
 			@RequestParam("nyuusyaDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate nyuusyaDate,
-			@RequestParam(value = "taisyaDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd" )  LocalDate taisyaDate,
+			@RequestParam("taisyaDate") String taisyaDateStr,
 			@RequestParam("syokugyoKind") Long syokugyoKind,
 			HttpSession session,
 			Model model) {
-		System.out.println("입사일: " + nyuusyaDate);
-		System.out.println("퇴사일: " + taisyaDate);
-		EmployeeRequestDTO employeeDto = new EmployeeRequestDTO(syainId, firstNameKanji, lastNameKanji, seibetu, syouzokuKaisya, nyuusyaDate, taisyaDate, syokugyoKind);
-		employeeService.updateSyain(employeeDto);
-		//
+		
+		// 1．セッションからユーザー情報を取得する
+		// ログインしていない場合はログインページにリダイレクトする
 		UserDTO userDto = (UserDTO) session.getAttribute("loginUser");
 		session.setAttribute("loginUser", userDto);
-		// 
-		model.addAttribute("loginUser", userDto); // 로그인 사용자 정보
+		if (userDto == null) {
+			return "redirect:/login";
+		}
 		
-		return  "redirect:/list";
+		// 2．パラメーターtaisyaDateの値がnullでない場合
+		// フォーマットを確認し、正しい形式のものだけを受け取る
+		LocalDate taisyaDate = null;
+	    if (taisyaDateStr != null && !taisyaDateStr.isBlank()) {
+	        if (taisyaDateStr.matches("\\d{4}-\\d{2}-\\d{2}")) {
+	        	 // "0000-00-00"の場合はLocalDateに変換できないため、別途処理する
+	            if (!taisyaDateStr.equals("0000-00-00")) {
+	                try {
+	                    taisyaDate = LocalDate.parse(taisyaDateStr);
+	                } catch (DateTimeParseException e) {
+	                	// 無効なフォーマットの場合はログのみ出力する
+	                    System.out.println("Invalid date: " + taisyaDateStr);
+	                }
+	            }
+	        }
+	    }
+		
+		// 3．受け取ったパラメーターをもとにDTOインスタンスを生成する
+		// 生成したインスタンスを使ってDBのテーブルを更新する
+		EmployeeRequestDTO employeeDto = new EmployeeRequestDTO(syainId, firstNameKanji, lastNameKanji, seibetu, syouzokuKaisya, nyuusyaDate, taisyaDate, syokugyoKind);
+		employeeService.updateSyain(employeeDto);
+		
+		// 4. 画面表示用のデータをModelに格納する
+		model.addAttribute("loginUser", userDto); // ログインユーザー情報
+		
+		return  "redirect:/list"; //社員管理画面へ遷移
 	}
 	
-
+	// 社員情報削除機能
 	@PostMapping("/employee/delete")
 	public String deleteEmployee(@RequestParam("syainId") Long syainId, RedirectAttributes redirectAttributes,
 			HttpSession session, Model model) {
+		// 1．セッションからユーザー情報を取得する
+		// ログインしていない場合はログインページにリダイレクトする
 		UserDTO userDto = (UserDTO) session.getAttribute("loginUser");
-		if (userDto == null) {
-			System.out.println("null");
-		}
 		session.setAttribute("loginUser", userDto);
-		model.addAttribute("loginUser", userDto);
-
+		if (userDto == null) {
+			return "redirect:/login";
+		}
+		
+		// 2．受け取ったパラメーターを使ってDBのレコードを削除する
+		// 3．処理結果にかかわらずメッセージを表示する
 		try {
 			employeeService.deleteBySyainId(syainId); // 실제 삭제 처리
 			redirectAttributes.addFlashAttribute("msg", "削除しました。");
 		} catch (Exception e) {
 			redirectAttributes.addFlashAttribute("msg", "削除に失敗しました。");
 		}
-		return "redirect:/list"; // 삭제 후 목록 화면 등으로 이동
+		
+		// 3. 画面表示用のデータをModelに格納する
+		model.addAttribute("loginUser", userDto); // ログインユーザー情報
+		
+		return "redirect:/list"; //社員管理画面へ遷移
 	}
 }
