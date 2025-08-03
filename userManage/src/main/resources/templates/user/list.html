@@ -5,7 +5,7 @@
 	<div th:replace="common/header :: header"></div>
 
 	<div class="container-fluid py-4">
-		<!-- 헤더 -->
+		<!-- ヘッダー -->
 		<div class="header-section">
 			<h3 class="mb-0">
 				<i class="fas fa-users me-2"></i>
@@ -13,7 +13,7 @@
 			</h3>
 		</div>
 
-		<!-- 검색 조건 섹션 -->
+		<!-- 検索条件 -->
 		<div class="search-section">
 			<h5 class="mb-3">
 				<i class="fas fa-search me-2"></i>
@@ -74,7 +74,7 @@
 			</form>
 		</div>
 
-		<!-- 검색 결과 섹션 -->
+		<!-- 検索結果 -->
 		<div class="result-section">
 			<div class="d-flex justify-content-between align-items-center mb-3">
 				<h5>
@@ -161,15 +161,13 @@
 	function validateStatus() {
 		const activeChecked = document.getElementById('active').checked;
 		const inactiveChecked = document.getElementById('inactive').checked;
-
 		if (!activeChecked && !inactiveChecked) {
 			alert('在職と非在職いずれにしても、1つのチェックが必須です。');
 			return false;
 		}
 		return true;
-
-		console.log("검색 실행");
 	}
+
 	function openDeleteModal(syainId, fullName) {
 		document.getElementById('deleteSyainId').value = syainId;
 		document.getElementById('deleteUserName').textContent = fullName;

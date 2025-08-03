@@ -35,13 +35,12 @@
 				社内統合管理システム
 			</div>
 			<div class="col-md-4 text-end">
-				<!-- 로고 대신 공간 확보 -->
 				<div style="height: 40px;"></div>
 			</div>
 		</div>
 
 		<div class="row">
-			<!-- 로그인 영역 -->
+			<!-- ログイン -->
 			<div class="col-md-4">
 				<div class="section-title">利用者登録</div>
 				<form th:action="@{/login}" method="post" onsubmit="return validateLoginForm();">
@@ -61,7 +60,7 @@
 					<span th:text="${loginError}"></span>
 				</div>
 			</div>
-			<!-- 기능 영역 -->
+			<!-- 機能 -->
 			<div class="col-md-8">
 				<div class="section-title">応用機能</div>
 				<div class="row">
@@ -109,7 +108,7 @@
 		const password = passwordInput.value.trim();
 
 
-		// --- ユーザコード 검사 ---
+		// --- ユーザコード ---
 		if (!userCode) {
 			alert("ユーザコードを入力してください。");
 			return false;
@@ -124,7 +123,7 @@
 			return false;
 		}
 
-		// --- パスワード 검사 ---
+		// --- パスワード ---
 		if (!password) {
 			alert("パスワードを入力してください。");
 			return false;
@@ -139,10 +138,10 @@
 			return false;
 		}
 
-		// --- 패스워드 MD5 암호화 ---
+		// --- パスワード MD5 暗号化 ---
 		const hashedPassword = CryptoJS.MD5(password).toString();
 		passwordInput.value = hashedPassword;
-		return true; // 제출 허용
+		return true; 
 	}
 
 </script>

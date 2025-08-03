@@ -6,7 +6,17 @@
 <mapper namespace="com.example.userManage.mapper.UserMapper">
 	
 	<select id="findByUserCode" parameterType="String" resultType="com.example.userManage.DTO.UserDTO">
-		SELECT user_id, user_code, user_name, password, user_role, is_youkou FROM user_auth WHERE user_code = #{userCode}
+		SELECT 
+			user_id, 
+			user_code, 
+			user_name, 
+			password, 
+			user_role, 
+			is_youkou 
+		FROM user_auth
+		<where>
+			user_code = #{userCode}
+		</where> 
 	</select>
 	
 	<insert id="insertAccess" parameterType="com.example.userManage.DTO.AccessDTO">

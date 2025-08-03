@@ -6,8 +6,10 @@
 	<br>
 	<form th:action="@{/employeeRegister}" method="post" 　onsubmit="return validateRegisterForm();">
 		<div class="border rounded p-3 mb-3">
+			<!-- 基本情報  -->
 			<h5>基本情報</h5>
 			<hr>
+			<!-- 社員ID  -->
 			<div class="mb-3 row">
 				<label for="syainId" class="col-sm-2 col-form-label">社員コード:</label>
 				<div class="col-sm-4">
@@ -15,6 +17,7 @@
 				</div>
 			</div>
 
+			<!-- 社員名  -->
 			<div class="mb-3 row">
 				<label class="col-sm-2 col-form-label">社員名（漢字）:</label>
 				<div class="col-sm-2">
@@ -30,25 +33,26 @@
 				</div>
 			</div>
 
-			<!-- 性別 입력 영역 -->
+			<!-- 性別  -->
 			<div class="border rounded p-3 mb-3">
 				<div class="mb-3 row align-items-center">
 					<label class="col-sm-2 col-form-label mb-0">性別:</label>
 					<div class="col-sm-10 d-flex align-items-center">
 						<div class="form-check form-check-inline mb-0">
 							<input class="form-check-input" type="radio" id="male" name="seibetu" value="1"
-							       th:checked="${seibetu == null or seibetu == 1}" />
+								th:checked="${seibetu == null or seibetu == 1}" />
 							<label class="form-check-label" for="male">男</label>
 						</div>
 						<div class="form-check form-check-inline mb-0">
 							<input class="form-check-input" type="radio" id="female" name="seibetu" value="2"
-							       th:checked="${seibetu == 2}" />
+								th:checked="${seibetu == 2}" />
 							<label class="form-check-label" for="female">女</label>
 						</div>
 					</div>
 				</div>
 			</div>
-			
+
+			<!-- 会社連携情報  -->
 			<div class="border rounded p-3 mb-3">
 				<h5>会社関連情報</h5>
 				<hr>
@@ -57,7 +61,8 @@
 					<label for="syouzokuKaisya" class="col-sm-2 col-form-label">所属会社</label>
 					<div class="col-sm-4">
 						<select id="syouzokuKaisya" name="syouzokuKaisya" class="form-select">
-							<option th:each="item : ${kaisyaList}" th:value="${item.category2}" th:text="${item.value1}"></option>
+							<option th:each="item : ${kaisyaList}" th:value="${item.category2}"
+								th:text="${item.value1}"></option>
 						</select>
 					</div>
 
@@ -75,7 +80,8 @@
 				<div class="mb-3 row">
 					<label for="taisyaDate" class="col-sm-2 col-form-label">退社日</label>
 					<div class="col-sm-4 d-flex align-items-center">
-						<input type="text" id="taisyaDate" name="taisyaDate" th:value="${taisyaDate}" class="form-control" />
+						<input type="text" id="taisyaDate" name="taisyaDate" th:value="${taisyaDate}"
+							class="form-control" />
 						<span class="ms-2 small text-muted">※YYYY-MM-DD</span>
 					</div>
 				</div>
@@ -85,13 +91,15 @@
 					<label for="syokugyoKind" class="col-sm-2 col-form-label">職業種類</label>
 					<div class="col-sm-4">
 						<select id="syokugyoKind" name="syokugyoKind" class="form-select">
-							<option th:each="item : ${syokugyoList}" th:value="${item.category3}" th:text="${item.value1}">
+							<option th:each="item : ${syokugyoList}" th:value="${item.category3}"
+								th:text="${item.value1}">
 							</option>
 						</select>
 					</div>
 				</div>
 			</div>
 
+			<!-- 口座情報  -->
 			<div class="border rounded p-3 mb-3">
 				<h5>給与関連情報</h5>
 				<hr>
@@ -112,16 +120,20 @@
 							<!-- 銀行コード～支店名のid名を、それぞれ bank_code、bank_name、branch_code、branch_name、にして下さい。-->
 							<tr>
 								<td>
-									<input type="text" id="bank_code" name="bank_code" class="form-control text-center" />
+									<input type="text" id="bank_code" name="bank_code"
+										class="form-control text-center" />
 								</td>
 								<td>
-									<input type="text" id="bank_name" name="bank_name" class="form-control text-center" />
+									<input type="text" id="bank_name" name="bank_name"
+										class="form-control text-center" />
 								</td>
 								<td>
-									<input type="text" id="branch_code" name="branch_code" class="form-control text-center" />
+									<input type="text" id="branch_code" name="branch_code"
+										class="form-control text-center" />
 								</td>
 								<td>
-									<input type="text" id="branch_name" name="branch_name" class="form-control text-center" />
+									<input type="text" id="branch_name" name="branch_name"
+										class="form-control text-center" />
 								</td>
 								<td>
 									<select id="kouza_type" name="kouza_type" class="form-select text-center">
@@ -132,7 +144,8 @@
 									</select>
 								</td>
 								<td>
-									<input type="text" id="kouza_number" name="kouza_number" class="form-control text-center">
+									<input type="text" id="kouza_number" name="kouza_number"
+										class="form-control text-center">
 								</td>
 								<td>
 									<input type="text" id="meigi" name="meigi" class="form-control text-center">
@@ -142,6 +155,8 @@
 					</table>
 				</div>
 			</div>
+
+			<!-- 技術情報  -->
 			<div class="border rounded p-3 mb-3">
 				<h5>技術経験</h5>
 				<hr>
@@ -159,12 +174,10 @@
 						</thead>
 						<tbody>
 							<tr th:each="row, stat : ${#numbers.sequence(0, osList.size() - 1, 5)}">
-								<!-- OS 셀은 첫 줄에만 표시되며 rowspan 처리 -->
 								<td th:if="${stat.index == 0}"
 									th:rowspan="${T(java.lang.Math).ceil(osList.size() / 5.0)}"
-									class="bg-info-subtle fw-bold align-middle">OS</td>
-
-								<!-- 기술 항목 최대 5개 반복 -->
+									class="bg-info-subtle fw-bold align-middle">OS
+								</td>
 								<td class="text-end" th:each="i : ${#numbers.sequence(0, 4)}"
 									th:if="${row + i < osList.size()}">
 									<span th:text="${osList[row + i].value1}" class="me-2"></span>
@@ -176,7 +189,6 @@
 										<option value="3">◎</option>
 									</select>
 								</td>
-								<!-- 빈 칸 채우기 (기술 수가 5개보다 적은 경우) -->
 								<td class="text-end" th:each="i : ${#numbers.sequence(0, 4)}"
 									th:if="${row + i >= osList.size()}"></td>
 							</tr>
@@ -185,6 +197,7 @@
 				</div>
 			</div>
 
+			<!-- 登録ボタン -->
 			<div class="text-center mt-4 mb-5">
 				<hr>
 				<button type="submit" class="btn btn-primary px-4 fw-bold">
@@ -201,7 +214,7 @@
 		const lastNameKanji = document.getElementById("lastNameKanji");
 		const firstNameKanji = document.getElementById("firstNameKanji");
 
-		// 社員コード 검사: 필수 + 영숫자 + 10자 이내
+		// 社員コード: 必須 + 英語、数字 + 10文字以内
 		const codeRegex = /^[A-Za-z0-9]{1,10}$/;
 		const syainIdValue = syainId.value.trim();
 		if (!syainIdValue) {
@@ -221,7 +234,7 @@
 			return false;
 		}
 
-		// 姓 (全角 / 15자 이내)
+		// 姓 (全角 / 15文字以内)
 		const lastName = lastNameKanji.value.trim();
 		if (!lastName) {
 			alert("姓(漢字)を入力してください。");
@@ -239,7 +252,7 @@
 			return false;
 		}
 
-		// 名 (全角 / 15자 이내)
+		// 名 (全角 / 15文字以内)
 		const firstName = firstNameKanji.value.trim();
 		if (!firstName) {
 			alert("名(漢字)を入力してください。");
@@ -259,8 +272,8 @@
 
 		return true;
 	}
-	
-	// 오늘 날짜를 yyyy-mm-dd 형식으로 변환
+
+	// 本日の日付をyyyy-mm-dd フォーマットで変換
 	const today = new Date().toISOString().split('T')[0];
 	document.getElementById('nyuusyaDate').value = today;
 </script>

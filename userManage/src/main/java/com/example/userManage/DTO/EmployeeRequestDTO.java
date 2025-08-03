@@ -12,6 +12,7 @@ import lombok.Setter;
 @Getter
 @Data
 public class EmployeeRequestDTO {
+	
 	private Long syainId;
 	private String firstNameKanji;
 	private String lastNameKanji;

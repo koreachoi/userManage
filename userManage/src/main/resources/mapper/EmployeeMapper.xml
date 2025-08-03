@@ -5,7 +5,8 @@
 
 <mapper namespace="com.example.userManage.mapper.EmployeeMapper">
 
-	<select id="findBySyainId" parameterType="long" resultType="com.example.userManage.DTO.EmployeeDTO">
+	<select id="findBySyainId" parameterType="long"
+		resultType="com.example.userManage.DTO.EmployeeDTO">
 		SELECT
 			syain_id,
 			first_name_kanji,
@@ -16,11 +17,15 @@
 			taisya_date,
 			syokugyo_kind
 		FROM syain_main
-		WHERE syain_id = #{syainId}
+		<where>
+			syain_id = #{syainId}
+		</where>
 	</select>
+
 	<select id="findByFilter" parameterType="map"
 		resultType="com.example.userManage.DTO.EmployeeDTO">
-		SELECT sm.syain_id,
+		SELECT 
+			sm.syain_id,
 			sm.first_name_kanji,
 			sm.last_name_kanji,
 			CASE
@@ -45,44 +50,48 @@
 			AND syokugyo.category1 = 3
 			AND
 			syokugyo.category2 = 4
-		WHERE 1 = 1
+		<where>
+			<!-- 職業種別（必須）-->
 			AND sm.syokugyo_kind = #{syokugyoKind}
-		<!-- 소속 회사 조건: null이면 전체 검색 -->
-		<if test="syouzokuKaisya != null and syouzokuKaisya != ''">
-			AND sm.syouzoku_kaisya = #{syouzokuKaisya}
-		</if>
 
-		<!-- 이름 조건: null 또는 공백이면 조건 생략 -->
-		<if test="firstNameKanji != null and firstNameKanji != ''">
-			AND (
-			sm.first_name_kanji LIKE CONCAT('%',
-			#{firstNameKanji}, '%')
-			OR sm.last_name_kanji LIKE CONCAT('%',
-			#{firstNameKanji}, '%')
-			)
-		</if>
-
-		<!-- 在職/退職 조건 -->
-		<if test="zaisyoku != null">
-			<if test="zaisyoku == 1">
-				AND sm.taisya_date IS NULL
+			<!-- 소속 회사 조건: null이면 전체 검색 -->
+			<if test="syouzokuKaisya != null and syouzokuKaisya != ''">
+				AND sm.syouzoku_kaisya = #{syouzokuKaisya}
 			</if>
-			<if test="zaisyoku == 0">
-				AND sm.taisya_date IS NOT NULL
-			</if>
-		</if>
 
+			<!-- 이름 조건: null 또는 공백이면 조건 생략 -->
+			<if test="firstNameKanji != null and firstNameKanji != ''">
+				AND (
+				sm.first_name_kanji LIKE CONCAT('%', #{firstNameKanji}, '%')
+				OR sm.last_name_kanji LIKE CONCAT('%', #{firstNameKanji}, '%')
+				)
+			</if>
+
+			<!-- 在職/退職 조건 -->
+			<if test="zaisyoku != null">
+				<if test="zaisyoku == 1">
+					AND sm.taisya_date IS NULL
+				</if>
+				<if test="zaisyoku == 0">
+					AND sm.taisya_date IS NOT NULL
+				</if>
+			</if>
+		</where>
 	</select>
 
 	<delete id="deleteBySyainId" parameterType="map">
-		DELETE FROM syain_main
-		WHERE syain_id = #{syainId}
+		DELETE FROM
+		syain_main
+		<where>
+			syain_id = #{syainId}
+		</where>
 	</delete>
 
 
 	<select id="findAllEmployee"
 		resultType="com.example.userManage.DTO.EmployeeDTO">
-		SELECT sm.syain_id,
+		SELECT 
+			sm.syain_id,
 			sm.first_name_kanji,
 			sm.last_name_kanji,
 			CASE sm.seibetu
@@ -108,10 +117,13 @@
 			AND syokugyo.category1
 			= 3
 			AND syokugyo.category2 = 4
-		WHERE 1 = 1
+		<where>
+        	<!-- 条件なし（今は全件取得）-->
+    	</where>
 	</select>
-	
-	<insert id="createSyain" parameterType="com.example.userManage.DTO.EmployeeRequestDTO">
+
+	<insert id="createSyain"
+		parameterType="com.example.userManage.DTO.EmployeeRequestDTO">
 		INSERT INTO syain_main (
 			last_name_kanji,
 			first_name_kanji,
@@ -131,20 +143,22 @@
 			#{syokugyoKind}
 		)
 	</insert>
-	
-	<update id="updateSyain" parameterType="com.example.userManage.DTO.EmployeeRequestDTO">
-		UPDATE syain_main 
-	    <set>
-	        <if test="lastNameKanji != null">last_name_kanji = #{lastNameKanji},</if>
-	        <if test="firstNameKanji != null">first_name_kanji = #{firstNameKanji},</if>
-	        <if test="seibetu != null">seibetu = #{seibetu},</if>
-	        <if test="syouzokuKaisya != null">syouzoku_kaisya = #{syouzokuKaisya},</if>
-	        <if test="nyuusyaDate != null">nyuusya_date = #{nyuusyaDate},</if>
-	        <if test="taisyaDate != null">taisya_date = #{taisyaDate},</if>
-	        <if test="syokugyoKind != null">syokugyo_kind = #{syokugyoKind}</if>
-	    </set>
-		WHERE 
+
+	<update id="updateSyain"
+		parameterType="com.example.userManage.DTO.EmployeeRequestDTO">
+		UPDATE syain_main
+		<set>
+			<if test="lastNameKanji != null">last_name_kanji = #{lastNameKanji},</if>
+			<if test="firstNameKanji != null">first_name_kanji = #{firstNameKanji},</if>
+			<if test="seibetu != null">seibetu = #{seibetu},</if>
+			<if test="syouzokuKaisya != null">syouzoku_kaisya = #{syouzokuKaisya},</if>
+			<if test="nyuusyaDate != null">nyuusya_date = #{nyuusyaDate},</if>
+			<if test="taisyaDate != null">taisya_date = #{taisyaDate},</if>
+			<if test="syokugyoKind != null">syokugyo_kind = #{syokugyoKind}</if>
+		</set>
+		<where>
 			syain_id = #{syainId}
+		</where>
 	</update>
 
 </mapper>

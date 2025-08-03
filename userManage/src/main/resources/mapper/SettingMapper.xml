@@ -4,35 +4,54 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.example.userManage.mapper.SettingMapper">
-	
-	<select id="findBySettingCategory" parameterType="map" resultType="com.example.userManage.DTO.SettingDTO">
-		SELECT category1, category2, category3, value1, value2, value3, value4, value5 
-		FROM tg_setting 
-		WHERE 1 = 1
-        <if test="category1 != null">
-            AND category1 = #{category1}
-        </if>
-        <if test="category2 != null">
-            AND category2 = #{category2}
-        </if>
-        <if test="category3 != null">
-            AND category3 = #{category3}
-        </if>
+
+	<select id="findBySettingCategory" parameterType="map"
+		resultType="com.example.userManage.DTO.SettingDTO">
+		SELECT 
+			category1, 
+			category2, 
+			category3, 
+			value1, 
+			value2, 
+			value3,
+			value4, 
+			value5
+		FROM tg_setting
+		<where>
+			<if test="category1 != null">
+				AND category1 = #{category1}
+			</if>
+			<if test="category2 != null">
+				AND category2 = #{category2}
+			</if>
+			<if test="category3 != null">
+				AND category3 = #{category3}
+			</if>
+		</where>
 	</select>
-	
-	<select id="findBySettingCategoryList" parameterType="map" resultType="com.example.userManage.DTO.SettingDTO">
-		SELECT category1, category2, category3, value1, value2, value3, value4, value5 
-		FROM tg_setting 
-		WHERE 1 = 1
-        <if test="category1 != null">
-            AND category1 = #{category1}
-        </if>
-        <if test="category2 != null">
-            AND category2 = #{category2}
-        </if>
-        <if test="category3 != null">
-            AND category3 = #{category3}
-        </if>
+
+	<select id="findBySettingCategoryList" parameterType="map"
+		resultType="com.example.userManage.DTO.SettingDTO">
+		SELECT 
+			category1, 
+			category2, 
+			category3, 
+			value1, 
+			value2, 
+			value3,
+			value4, 
+			value5
+		FROM tg_setting
+		<where>
+			<if test="category1 != null">
+				AND category1 = #{category1}
+			</if>
+			<if test="category2 != null">
+				AND category2 = #{category2}
+			</if>
+			<if test="category3 != null">
+				AND category3 = #{category3}
+			</if>
+		</where>
 	</select>
-	
 </mapper>

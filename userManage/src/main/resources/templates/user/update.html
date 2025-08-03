@@ -6,8 +6,11 @@
 	<br>
 	<form th:action="@{/employeeUpdate}" th:object="${syain}" method="post" onsubmit="return validateRegisterForm();">
 		<div class="border rounded p-3 mb-3">
+			<!-- 基本情報  -->
 			<h5>基本情報</h5>
 			<hr>
+			<!-- 社員ID  -->
+			<!-- 社員IDはHiddenで表示する  -->
 			<div class="mb-3 row">
 				<div class="col-sm-4">
 					<input type="hidden" id="syainId" name="syainId" th:field="*{syainId}" class="form-control" />
@@ -48,6 +51,7 @@
 			</div>
 
 			<div class="border rounded p-3 mb-3">
+				<!-- 会社連携情報  -->
 				<h5>会社関連情報</h5>
 				<hr>
 				<!-- 所属会社 -->
@@ -94,6 +98,7 @@
 				</div>
 			</div>
 
+			<!-- 更新ボタン -->
 			<div class="text-center mt-4 mb-5">
 				<hr>
 				<button type="submit" class="btn btn-primary px-4 fw-bold">
@@ -107,7 +112,7 @@
 		const lastNameKanji = document.getElementById("lastNameKanji");
 		const firstNameKanji = document.getElementById("firstNameKanji");
 
-		// 姓 (全角 / 15자 이내)
+		// 姓 (全角 / 15文字以内)
 		const lastName = lastNameKanji.value.trim();
 		if (!lastName) {
 			alert("姓(漢字)を入力してください。");
@@ -125,7 +130,7 @@
 			return false;
 		}
 
-		// 名 (全角 / 15자 이내)
+		// 名 (全角 / 15文字以内)
 		const firstName = firstNameKanji.value.trim();
 		if (!firstName) {
 			alert("名(漢字)を入力してください。");
